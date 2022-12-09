@@ -18,18 +18,37 @@ def main():
     optims = optim.SGD(model.parameters(), lr=1e-4)
     criterion = nn.CrossEntropyLoss()
     now = datetime.now()
+    timeiterStart = datetime.now()
+    iterTime = []
+    dataLoadTime = []
     for idx, (imgs,label) in enumerate(data_loader):
-        print(idx, (datetime.now() - now).total_seconds() * 1000)
-        print(imgs.shape, label.dtype);
-        print(imgs.dtype)
+        loadtime = (datetime.now() - now).total_seconds() * 1000
+
+        print( "iteration - ", idx, " dataloading time ",loadtime)
+        # print(imgs.shape, label.dtype);
+        # print(imgs.dtype)
         imgs = imgs.float().to(mps_device)
         optims.zero_grad()
-        now = datetime.now();
         label=label.cuda()
         output = model(imgs).cuda()
         loss = criterion(output,label)
         loss.backward()
         optims.step()
+        now = datetime.now()
+        timeiterEnd= datetime.now()
+        iterationTime = (timeiterEnd-timeiterStart).total_seconds() * 1000
+        print("iteration - ", idx, "iteration time"  ,iterationTime)
+        timeiterStart = datetime.now()
+        iterTime.append(iterationTime)
+        dataLoadTime.append(loadtime)
+        if(idx%20 == 0 and idx!=0):
+            print("average iteration time - ", sum(iterTime)/len(iterTime))
+            print("average load time - ", sum(dataLoadTime)/len(dataLoadTime))
+            dataLoadTime = []
+            iterTime = []
+
+
+
 
 
 if __name__ == "__main__":
