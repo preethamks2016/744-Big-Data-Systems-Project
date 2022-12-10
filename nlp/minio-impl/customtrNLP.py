@@ -10,12 +10,11 @@ from transformers import RobertaTokenizer
 class CustomDataset(Dataset):    
     def __init__(self):
         self.tokenizer = RobertaTokenizer.from_pretrained('varunItalian', max_len=512)
-        self.files_path = "/home/rkosgi/744Project/nlp/data/text/oscar_it/" 
+        self.files_path = "./data/text/oscar/" 
         file_list = glob.glob(self.files_path + "*") ##Contents inside Path
         self.fileNames = []
         for class_path in file_list:
             for filepath in glob.glob(class_path): ##Loop over all the images
-                print(filepath)
                 self.fileNames.append(filepath) ##Check this once we have the data
         print('Number of files', len(self.fileNames))
         self.dataArr = []

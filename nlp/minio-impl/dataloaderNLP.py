@@ -1,7 +1,7 @@
 import tokenize
 import torch
 from datetime import datetime
-from customtrNLP import CustomDataset
+from customtr import CustomDataset
 from transformers import RobertaConfig
 from transformers import RobertaForMaskedLM
 from transformers import AdamW

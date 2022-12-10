@@ -18,3 +18,5 @@ pip3 install transformers
 https://dax-cdn.cdn.appdomain.cloud/dax-publaynet/1.0.0/train-0.tar.gz
 tar -xvf train-0.tar.gz 
 #follow this to install nvidia driver - https://piazza.com/class/l79l1xxtu6i1kb/post/100
+#for nlp
+pip3 install datasets
