@@ -13,7 +13,7 @@ class CustomDataset(Dataset):
         self.tokenizer = RobertaTokenizer.from_pretrained('../varunItalian', max_len=512)
         client = Minio("localhost:9000",access_key="minioadmin",secret_key="minioadmin", secure=False)
         self.client = client
-        objects = client.list_objects("test-nlp", recursive=True)
+        objects = client.list_objects("nlp-files", recursive=True)
         self.fileNames = []
         for bucket in objects:
             print(bucket.object_name)
@@ -45,7 +45,7 @@ class CustomDataset(Dataset):
         print('HI', line_idx)
         file_path = self.fileNames[file_idx]
         if(line_idx == 0):
-            obj = self.client.get_object(bucket_name = 'test-nlp',object_name= file_path)
+            obj = self.client.get_object(bucket_name = 'nlp-files',object_name= file_path)
             data = obj.data.decode()
             lines = data.split('\n')
             # with open(file_path, 'r', encoding='utf-8') as fp:

@@ -9,15 +9,16 @@ from transformers import RobertaTokenizer
 
 class CustomDataset(Dataset):    
     def __init__(self):
+        # print("Helloo")
         self.tokenizer = RobertaTokenizer.from_pretrained('./varunItalian', max_len=512)
         self.files_path = "/home/rkosgi/744Project/nlp/data/text/oscar_it/" 
         file_list = glob.glob(self.files_path + "*") ##Contents inside Path
         self.fileNames = []
         for class_path in file_list:
             for filepath in glob.glob(class_path): ##Loop over all the images
-                print(filepath)
+                # print(filepath)
                 self.fileNames.append(filepath) ##Check this once we have the data
-        print('Number of files', len(self.fileNames))
+        # print('Number of files', len(self.fileNames))
         self.dataArr = []
         self.mod = 1000
         self.fileOpen = None
@@ -32,19 +33,21 @@ class CustomDataset(Dataset):
         
         #Add some randome file openings ask !!!!
         #possible randomsize on files, batch sizes and encoding ,1 = 32
-        print(idx, "HW", len(self.fileNames) * self.mod)
-        file_idx = idx // self.mod;
+        # print(idx, "HW", len(self.fileNames) * self.mod)
+        file_idx = idx // self.mod
         line_idx = idx % self.mod
-        print('HI', line_idx)
+        print("lineIdx", line_idx,"file idx ", file_idx)
+        # print('HI', line_idx)
         file_path = self.fileNames[file_idx]
         if(line_idx == 0):
             with open(file_path, 'r', encoding='utf-8') as fp:
                 lines = fp.read().split('\n')
+            lines = lines[:1000]
             batch = self.tokenizer(lines, max_length=512, padding='max_length', truncation=True)
             mask = torch.tensor(batch.attention_mask)
-            print(mask.shape)
+            # print(mask.shape)
             labels = torch.tensor(batch.input_ids)
-            print(labels.shape)
+            # print(labels.shape)
             input_ids = labels.detach().clone()
             rand = torch.rand(input_ids.shape)
             mask_arr = (rand < .15) * (input_ids != 0) * (input_ids != 1) * (input_ids != 2)

@@ -5,12 +5,12 @@ from torch.utils.data import Dataset, DataLoader
 import json
 import random
 from transformers import RobertaTokenizer
-
+import h5py
 
 class CustomDataset(Dataset):    
     def __init__(self):
-        self.tokenizer = RobertaTokenizer.from_pretrained('varunItalian', max_len=512)
-        self.files_path = "./data/procData/" 
+        self.tokenizer = RobertaTokenizer.from_pretrained('/home/rkosgi/744Project/nlp/varunItalian', max_len=512)
+        self.files_path = "/home/rkosgi/744Project/nlp/hdf5-impl/textFInal.hdf5" 
         self.hf = h5py.File(self.files_path, 'r')
         self.mod = 1000
         self.input_ids = None 
@@ -25,16 +25,16 @@ class CustomDataset(Dataset):
         dataset_idx = idx // self.mod
         line_idx = idx % self.mod
         if(line_idx == 0):
-            self.ds = self.hf[str(dataset_idx)]
+            ds = self.hf[str(dataset_idx)]
             data = np.array(ds[0:self.mod])
             lines = []
             for string in data:
                 lines.append(string.decode("utf-8"))
             batch = self.tokenizer(lines, max_length=512, padding='max_length', truncation=True)
             mask = torch.tensor(batch.attention_mask)
-            print(mask.shape)
+            # print(mask.shape)
             labels = torch.tensor(batch.input_ids)
-            print(labels.shape)
+            # print(labels.shape)
             input_ids = labels.detach().clone()
             rand = torch.rand(input_ids.shape)
             mask_arr = (rand < .15) * (input_ids != 0) * (input_ids != 1) * (input_ids != 2)
