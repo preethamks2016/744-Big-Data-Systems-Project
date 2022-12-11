@@ -6,7 +6,7 @@ import h5py
 from PIL import Image
 import numpy as np
 
-hdf5_path = './images.hdf5'
+hdf5_path = './imagesCompressed.hdf5'
 hf = h5py.File(hdf5_path, 'w') # open a hdf5 file
 
 # get the path/directory
@@ -23,7 +23,7 @@ for image in os.listdir(folder_dir):
 
         binary_data_np = np.asarray(binary_data)
         dataset_name = str(idx)
-        dset = hf.create_dataset(dataset_name, data=binary_data_np)  # write the data to hdf5 file
+        dset = hf.create_dataset(dataset_name, data=binary_data_np, compression="gzip", compression_opts=9)  # write the data to hdf5 file
 
         idx=idx+1
     

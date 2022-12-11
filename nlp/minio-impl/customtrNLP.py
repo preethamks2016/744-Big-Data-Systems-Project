@@ -5,17 +5,25 @@ from torch.utils.data import Dataset, DataLoader
 import json
 import random
 from transformers import RobertaTokenizer
-
+from minio import Minio
 
 class CustomDataset(Dataset):    
     def __init__(self):
-        self.tokenizer = RobertaTokenizer.from_pretrained('varunItalian', max_len=512)
-        self.files_path = "./data/text/oscar/" 
-        file_list = glob.glob(self.files_path + "*") ##Contents inside Path
+        print("initializing datatset")
+        self.tokenizer = RobertaTokenizer.from_pretrained('../varunItalian', max_len=512)
+        client = Minio("localhost:9000",access_key="minioadmin",secret_key="minioadmin", secure=False)
+        self.client = client
+        objects = client.list_objects("test-nlp", recursive=True)
         self.fileNames = []
-        for class_path in file_list:
-            for filepath in glob.glob(class_path): ##Loop over all the images
-                self.fileNames.append(filepath) ##Check this once we have the data
+        for bucket in objects:
+            print(bucket.object_name)
+            self.fileNames.append(bucket.object_name)
+        # self.files_path = "./data/text/oscar/" 
+        # file_list = glob.glob(self.files_path + "*") ##Contents inside Path
+       
+        # for class_path in file_list:
+        #     for filepath in glob.glob(class_path): ##Loop over all the images
+        #         self.fileNames.append(filepath) ##Check this once we have the data
         print('Number of files', len(self.fileNames))
         self.dataArr = []
         self.mod = 1000
@@ -37,8 +45,11 @@ class CustomDataset(Dataset):
         print('HI', line_idx)
         file_path = self.fileNames[file_idx]
         if(line_idx == 0):
-            with open(file_path, 'r', encoding='utf-8') as fp:
-                lines = fp.read().split('\n')
+            obj = self.client.get_object(bucket_name = 'test-nlp',object_name= file_path)
+            data = obj.data.decode()
+            lines = data.split('\n')
+            # with open(file_path, 'r', encoding='utf-8') as fp:
+            #     lines = fp.read().split('\n')
             batch = self.tokenizer(lines, max_length=512, padding='max_length', truncation=True)
             mask = torch.tensor(batch.attention_mask)
             print(mask.shape)

@@ -9,7 +9,7 @@ from transformers import RobertaTokenizer
 
 class CustomDataset(Dataset):    
     def __init__(self):
-        self.tokenizer = RobertaTokenizer.from_pretrained('varunItalian', max_len=512)
+        self.tokenizer = RobertaTokenizer.from_pretrained('./varunItalian', max_len=512)
         self.files_path = "/home/rkosgi/744Project/nlp/data/text/oscar_it/" 
         file_list = glob.glob(self.files_path + "*") ##Contents inside Path
         self.fileNames = []

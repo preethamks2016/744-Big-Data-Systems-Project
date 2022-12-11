@@ -11,6 +11,7 @@ from tqdm.auto import tqdm
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
 def main():
+    print("in nlp")
     dataset = CustomDataset()
     print(dataset)
     batch_sizes = 3
