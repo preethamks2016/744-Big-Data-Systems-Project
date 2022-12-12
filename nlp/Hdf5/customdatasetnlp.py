@@ -10,7 +10,7 @@ import h5py
 class CustomDataset(Dataset):    
     def __init__(self):
         self.tokenizer = RobertaTokenizer.from_pretrained('/home/rkosgi/744Project/nlp/varunItalian', max_len=512)
-        self.files_path = "/home/rkosgi/744Project/nlp/hdf5-impl/textFInal.hdf5" 
+        self.files_path = "/home/rkosgi/744Project/nlp/hdf5-generate-files/textFInal.hdf5" 
         self.hf = h5py.File(self.files_path, 'r')
         self.mod = 1000
         self.input_ids = None 

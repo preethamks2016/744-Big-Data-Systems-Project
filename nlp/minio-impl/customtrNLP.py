@@ -16,7 +16,7 @@ class CustomDataset(Dataset):
         objects = client.list_objects("nlp-files", recursive=True)
         self.fileNames = []
         for bucket in objects:
-            print(bucket.object_name)
+            # print(bucket.object_name)
             self.fileNames.append(bucket.object_name)
         # self.files_path = "./data/text/oscar/" 
         # file_list = glob.glob(self.files_path + "*") ##Contents inside Path
@@ -24,7 +24,7 @@ class CustomDataset(Dataset):
         # for class_path in file_list:
         #     for filepath in glob.glob(class_path): ##Loop over all the images
         #         self.fileNames.append(filepath) ##Check this once we have the data
-        print('Number of files', len(self.fileNames))
+        # print('Number of files', len(self.fileNames))
         self.dataArr = []
         self.mod = 1000
         self.fileOpen = None
@@ -39,10 +39,10 @@ class CustomDataset(Dataset):
         
         #Add some randome file openings ask !!!!
         #possible randomsize on files, batch sizes and encoding ,1 = 32
-        print(idx, "HW", len(self.fileNames) * self.mod)
+        # print(idx, "HW", len(self.fileNames) * self.mod)
         file_idx = idx // self.mod;
         line_idx = idx % self.mod
-        print('HI', line_idx)
+        # print('HI', line_idx)
         file_path = self.fileNames[file_idx]
         if(line_idx == 0):
             obj = self.client.get_object(bucket_name = 'nlp-files',object_name= file_path)
@@ -50,11 +50,12 @@ class CustomDataset(Dataset):
             lines = data.split('\n')
             # with open(file_path, 'r', encoding='utf-8') as fp:
             #     lines = fp.read().split('\n')
+            lines = lines[:1000]
             batch = self.tokenizer(lines, max_length=512, padding='max_length', truncation=True)
             mask = torch.tensor(batch.attention_mask)
-            print(mask.shape)
+            # print(mask.shape)
             labels = torch.tensor(batch.input_ids)
-            print(labels.shape)
+            # print(labels.shape)
             input_ids = labels.detach().clone()
             rand = torch.rand(input_ids.shape)
             mask_arr = (rand < .15) * (input_ids != 0) * (input_ids != 1) * (input_ids != 2)

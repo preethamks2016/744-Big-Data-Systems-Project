@@ -10,7 +10,7 @@ import h5py
 class CustomDataset(Dataset):    
     def __init__(self):
         self.tokenizer = RobertaTokenizer.from_pretrained('/home/rkosgi/744Project/nlp/varunItalian', max_len=512)
-        self.files_path = "/home/rkosgi/744Project/nlp/hdf5-impl/textFInal.hdf5" 
+        self.files_path = "/home/rkosgi/744Project/nlp/hdf5-generate-files/textFInal.hdf5" 
         self.hf = h5py.File(self.files_path, 'r')
         self.mod = 1000
         self.input_ids = None 
@@ -24,14 +24,16 @@ class CustomDataset(Dataset):
         dataset_idx = idx // self.mod
         line_idx = idx % self.mod
         ds = self.hf[str(dataset_idx)]
-        print(line_idx, 'bsl')
-        data = np.array(ds[line_idx:line_idx+1])
+        # print(line_idx, 'bsl')
+        # print(ds[line_idx])
+        data = ds[line_idx]
+        # print(data.shape)
+        # print("len", len(data))
             # data = data[line_idx]
-        print(data.shape)
         lines = []
-        for string in data:
-            print(string.decode("utf-8"))
-            lines.append(string.decode("utf-8"))
+        # for string in data:
+        #     print(string.decode("utf-8"))
+        lines.append(data.decode("utf-8"))
         batch = self.tokenizer(lines, max_length=512, padding='max_length', truncation=True)
         mask = torch.tensor(batch.attention_mask)
         print(mask.shape)

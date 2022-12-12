@@ -1,7 +1,7 @@
 import tokenize
 import torch
 from datetime import datetime
-from customtrNLP import CustomDataset
+from customtrNLPexp2 import CustomDataset
 from transformers import RobertaConfig
 from transformers import RobertaForMaskedLM
 from transformers import AdamW
@@ -13,7 +13,7 @@ print("before", "hii")
 device = torch.device('cuda:0') if torch.cuda.is_available() else torch.device('cpu')
 
 torch.cuda.empty_cache()
-def main(batchSize, numWorkers, outputFile, numThreads):
+def main(batchSize, numWorkers, outputFile, numThreads, isShuffle):
     
     if(numThreads>0):
         torch.set_num_threads(numThreads)
@@ -21,7 +21,7 @@ def main(batchSize, numWorkers, outputFile, numThreads):
     dataset = CustomDataset()
     # print(dataset)
 
-    loader = torch.utils.data.DataLoader(dataset, batch_size=batchSize, shuffle=False, num_workers=numWorkers)
+    loader = torch.utils.data.DataLoader(dataset, batch_size=batchSize, shuffle=isShuffle, num_workers=numWorkers)
 
     config = RobertaConfig(
         vocab_size=30_522,  # we align this to the tokenizer vocab_size
@@ -91,7 +91,7 @@ def main(batchSize, numWorkers, outputFile, numThreads):
                 print(len(metrics))
                 dataLoadTime = []
                 iterTime = []
-            if(count==300):
+            if(count==40):
                 break
             count = count + 1
     model.save_pretrained('./vitalian')  # and don't forget to save filiBERTo!
@@ -108,7 +108,9 @@ if __name__ == "__main__":
     parser.add_argument('--num_workers', type=int, default=0, help='number of workers')
     parser.add_argument('--output_file', type=str, default='metrics_ext4.csv', help='metrics file name')
     parser.add_argument('--num_threads', type=int, default=0, help='number of threads')
+    parser.add_argument('--shuffle', type=bool, default=False, help='shuffle')
+
     args = parser.parse_args()
-    main(args.batch_size,args.num_workers, args.output_file,args.num_threads )
+    main(args.batch_size,args.num_workers, args.output_file,args.num_threads,args.shuffle )
     # main()
 
